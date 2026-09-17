@@ -1,0 +1,14 @@
+# Build output
+.build/
+DerivedData/
+*.xcarchive
+
+# Xcode user state
+xcuserdata/
+*.xcuserstate
+
+# macOS
+.DS_Store
+
+# Release packaging output
+dist/
