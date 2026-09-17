@@ -15,7 +15,7 @@ This page takes you from an empty Mac to your first Calendar event.
 
 ![The Calendar Time Logger installer: the CTL wordmark and the product name on black, the app icon, an arrow, and the Applications folder](../Design/Screenshots/15-installation.png)
 
-1. Open `Calendar-Time-Logger-v1.4.0.dmg`. The installer window shows the CTL mark, the app, and your Applications folder.
+1. Download `Calendar-Time-Logger-v1.4.0.dmg` from the [latest release on GitHub](https://github.com/abarman152/calendar-time-logger/releases/latest) and open it. The installer window shows the CTL mark, the app, and your Applications folder.
 2. Drag **Calendar Time Logger** onto **Applications**.
 3. Eject the disk image (drag it to the Trash, or choose **Eject** in Finder's sidebar).
 4. Open Calendar Time Logger from Applications or Spotlight.
@@ -24,7 +24,7 @@ This page takes you from an empty Mac to your first Calendar event.
 
 **Upgrading.** Installing over an older version keeps all your templates and work logs. Upgrading from 1.2 gives existing ones the category **General**, and 1.4.0 builds its stored category list from your templates (see [Categories](Categories.md)); an older version can't open the data afterwards.
 
-To build the app or the disk image yourself, see the [README](../../README.md#development) and [Building](../Development/DEVELOPMENT.md#release-packaging).
+To build the app or the disk image yourself, see the [README](../../README.md#option-2-build-from-source) and [Building](../Development/DEVELOPMENT.md#release-packaging).
 
 ## 2. The welcome screen
 

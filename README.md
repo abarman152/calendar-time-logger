@@ -6,20 +6,20 @@
 
 **Live work tracking for macOS. Record work as it happens; each finished session becomes an accurate Apple Calendar event.**
 
+[![Latest release](https://img.shields.io/github/v/release/abarman152/calendar-time-logger?label=release)](https://github.com/abarman152/calendar-time-logger/releases/latest)
 ![Platform: macOS 27+](https://img.shields.io/badge/platform-macOS%2027%2B-lightgrey)
 ![Swift 6](https://img.shields.io/badge/Swift-6-orange)
-![Version 1.4.0](https://img.shields.io/badge/version-1.4.0-blue)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+**[Download for macOS](https://github.com/abarman152/calendar-time-logger/releases/latest)** · [Installation](#installation) · [User Guide](Documentation/User%20Guide/README.md)
 
 </div>
 
-![The Calendar Time Logger dashboard during a running session: the live timer, Pause and Finish Work, the session's category and priority, today's progress ring, and today's work](Documentation/Design/Screenshots/02-dashboard-active-session.png)
-
-Calendar Time Logger records the work you actually do, while you do it. Starting a template adds nothing to your calendar. When you choose **Finish Work**, the session is saved to Work Logs first and only then written to Apple Calendar with its real start and finish times, so a Calendar problem never costs you the record of your work.
-
-> **Your actual work is the source of truth. Apple Calendar is the output.**
+**Contents:** [Installation](#installation) · [About](#about) · [Features](#features) · [Screenshots](#screenshots) · [Getting Started](#getting-started) · [Templates](#templates) · [Categories](#categories) · [Task Priority](#task-priority) · [Menu Bar](#menu-bar) · [Calendar](#calendar) · [Work Logs](#work-logs) · [Analytics](#analytics) · [Excel Export](#excel-export) · [Settings](#settings) · [Development](#development) · [Testing](#testing) · [Release](#release) · [Documentation](#documentation) · [Contributing](#contributing) · [License](#license) · [Author](#author)
 
 ## Installation
+
+**[Download Calendar Time Logger 1.4.0 (DMG)](https://github.com/abarman152/calendar-time-logger/releases/download/v1.4.0/Calendar-Time-Logger-v1.4.0.dmg)** · [All releases](https://github.com/abarman152/calendar-time-logger/releases)
 
 ### Requirements
 
@@ -30,17 +30,53 @@ Calendar Time Logger records the work you actually do, while you do it. Starting
 | Notifications | Optional |
 | Network | None. The app is sandboxed without the network entitlement. |
 
-### Install from the disk image
+### Option 1: Install from the disk image
 
-1. Get `Calendar-Time-Logger-v1.4.0.dmg`. There is no public download page yet; the image is built by `scripts/package-dmg.sh` into `dist/` (see [Release](#release)).
-2. Open the disk image. A window shows **Calendar Time Logger** and an **Applications** folder.
+![The Calendar Time Logger installer: the CTL wordmark on black, the app icon, an arrow, and the Applications folder](Documentation/Design/Screenshots/15-installation.png)
+
+1. Download `Calendar-Time-Logger-v1.4.0.dmg` from the [latest release](https://github.com/abarman152/calendar-time-logger/releases/latest).
+2. Open the downloaded disk image. A window shows **Calendar Time Logger** and an **Applications** folder.
 3. Drag **Calendar Time Logger** onto **Applications**.
 4. Eject the disk image and open **Calendar Time Logger** from Applications.
 5. On first launch, allow Calendar access if you want sessions added to Apple Calendar, and notifications if you want them. Both can be changed later in **System Settings › Privacy & Security**.
 
-**First-launch security check.** Builds are signed with a personal Apple Development certificate and are **not notarized**. They open normally on the Mac that built them. On another Mac, macOS blocks the first launch because it can't verify the developer; dismiss the warning, open **System Settings › Privacy & Security**, and click **Open Anyway** next to the message about Calendar Time Logger. Only do this for a copy from a source you trust.
+**First-launch security check.** The app is signed with a personal Apple Development certificate and is **not notarized**, so macOS blocks the first launch of a downloaded copy because it can't verify the developer. Dismiss the warning, open **System Settings › Privacy & Security**, and click **Open Anyway** next to the message about Calendar Time Logger. You only need to do this once.
 
-**Upgrading.** Installing 1.4.0 over 1.3 migrates your data in place and builds a stored category list from your templates; no template or work log is rewritten. Earlier versions can't open the store afterwards. Only one copy of the app runs at a time.
+**Verify the download (optional).** Each release lists the disk image's SHA-256 checksum. Compare it with:
+
+```bash
+shasum -a 256 ~/Downloads/Calendar-Time-Logger-v1.4.0.dmg
+```
+
+**Upgrading.** Quit the running copy, then drag the new version onto Applications and replace the old one. Installing 1.4.0 over 1.3 migrates your data in place and builds a stored category list from your templates; no template or work log is rewritten. Earlier versions can't open the data afterwards. Only one copy of the app runs at a time.
+
+### Option 2: Build from source
+
+Requires Xcode 27 (built with Xcode 27.0 beta).
+
+```bash
+git clone https://github.com/abarman152/calendar-time-logger.git
+cd calendar-time-logger
+
+# Use Xcode 27 if xcode-select points at the Command Line Tools
+export DEVELOPER_DIR=/Applications/Xcode-beta.app/Contents/Developer
+
+xcodebuild -project calender_time_logger/calender_time_logger.xcodeproj \
+  -scheme calender_time_logger -configuration Release \
+  -destination 'platform=macOS' -derivedDataPath .build/DerivedData build
+
+open ".build/DerivedData/Build/Products/Release/Calendar Time Logger.app"
+```
+
+Or open `calender_time_logger/calender_time_logger.xcodeproj` in Xcode, select the **calender_time_logger** scheme and **My Mac**, set your own team under **Signing & Capabilities**, and choose **Product › Run**. To build the disk image yourself, run `scripts/package-dmg.sh` (see [Release](#release)).
+
+## About
+
+![The Calendar Time Logger dashboard during a running session: the live timer, Pause and Finish Work, the session's category and priority, today's progress ring, and today's work](Documentation/Design/Screenshots/02-dashboard-active-session.png)
+
+Calendar Time Logger records the work you actually do, while you do it. Starting a template adds nothing to your calendar. When you choose **Finish Work**, the session is saved to Work Logs first and only then written to Apple Calendar with its real start and finish times, so a Calendar problem never costs you the record of your work.
+
+> **Your actual work is the source of truth. Apple Calendar is the output.**
 
 ## Features
 
@@ -229,7 +265,19 @@ There is no UI test target. Screens are verified manually in demo mode against t
 scripts/package-dmg.sh
 ```
 
-The script runs a clean Release build; verifies the bundle identifier, signature, icon, and the absence of DEBUG code and debug artifacts; stages the app with an Applications shortcut, the branded installer background, and the volume icon; lays out the Finder window; then compresses and verifies the image and writes a SHA-256 checksum. Output: `dist/Calendar-Time-Logger-v<version>.dmg`. Signing, notarization, and the full checklist are in [RELEASE.md](Documentation/Releases/RELEASE.md); version policy is in [VERSION.md](Documentation/Releases/VERSION.md); changes are in the [changelog](Documentation/Releases/CHANGELOG.md).
+The script runs a clean Release build; verifies the bundle identifier, signature, icon, and the absence of DEBUG code and debug artifacts; stages the app with an Applications shortcut, the branded installer background, and the volume icon; lays out the Finder window; then compresses and verifies the image and writes a SHA-256 checksum. Output: `dist/Calendar-Time-Logger-v<version>.dmg` and its `.sha256` file.
+
+To publish, tag the version and attach both files to a [GitHub release](https://github.com/abarman152/calendar-time-logger/releases), keeping the file name so the download links above keep working:
+
+```bash
+git tag v1.4.0 && git push origin v1.4.0
+gh release create v1.4.0 dist/Calendar-Time-Logger-v1.4.0.dmg dist/Calendar-Time-Logger-v1.4.0.dmg.sha256 \
+  --title "Calendar Time Logger 1.4.0" --notes-file ~/Desktop/release-notes.md
+```
+
+Write the release notes from the version's [changelog](Documentation/Releases/CHANGELOG.md) section, in a file outside the repository.
+
+Signing, notarization, and the full checklist are in [RELEASE.md](Documentation/Releases/RELEASE.md); version policy is in [VERSION.md](Documentation/Releases/VERSION.md); changes are in the [changelog](Documentation/Releases/CHANGELOG.md).
 
 ## Documentation
 
@@ -243,7 +291,17 @@ The script runs a clean Release build; verifies the bundle identifier, signature
 | Privacy | [PRIVACY.md](Documentation/Product/PRIVACY.md): everything stays on your Mac; no account, sync, analytics, or network access |
 | Everything | [Documentation index](Documentation/README.md) |
 
-**Known limitations:** builds aren't notarized yet; Apple Calendar colors events by calendar, so a template can't color its own events; sessions crossing midnight count on the day they started; Analytics has no custom date range; English only; no iCloud sync or iPhone, iPad, or Apple Watch versions.
+**Known limitations:** releases aren't notarized yet; Apple Calendar colors events by calendar, so a template can't color its own events; sessions crossing midnight count on the day they started; Analytics has no custom date range; English only; no iCloud sync or iPhone, iPad, or Apple Watch versions.
+
+## Contributing
+
+Bug reports and suggestions are welcome in [GitHub Issues](https://github.com/abarman152/calendar-time-logger/issues). Please include your macOS version, the Calendar Time Logger version (**About**), and the steps that reproduce the problem.
+
+Pull requests are welcome too. Before opening one:
+
+- Follow [CLAUDE.md](CLAUDE.md) and [DOCUMENTATION_RULES.md](Documentation/Development/DOCUMENTATION_RULES.md): documentation describes what the code actually does, new behavior in the package needs tests, and architectural decisions get an ADR.
+- Update the owning documentation and add a [changelog](Documentation/Releases/CHANGELOG.md) entry.
+- Make sure `scripts/verify.sh --full` passes.
 
 ## License
 
@@ -253,4 +311,4 @@ Copyright (c) 2026 Abir Barman.
 
 ## Author
 
-**Abir Barman** · [abirbarman.com](https://abirbarman.com)
+**Abir Barman** · [abirbarman.com](https://abirbarman.com) · [GitHub](https://github.com/abarman152)
